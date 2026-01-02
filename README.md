@@ -1,1 +1,44 @@
 # Department-Management-System
+## Setup and Configuration
+You'll Need 
+- Java Development Kit (JDK)
+- IntelliJ Idea `You can use any Code Editor`
+- Apache Tomcat Server [Apache Tomcat](https://tomcat.apache.org/download-90.cgi) for Linux download tar.gz
+
+We have used Apache Tomcat 9, you can use 9 or newer version.
+Download the Apache Tomcat Server and unzip/extract folder of the Apache Tomcat.
+
+Clone the Repository
+```
+https://github.com/Haziq8900/Department-Management-System.git
+```
+
+For Linux
+```
+git@github.com:Haziq8900/Department-Management-System.git
+```
+
+- Open IntelliJ Idea
+- Click on `File` tab
+- Click on `New`
+- Click on `Project from Version Control`
+- Paste the Repo URL
+
+Click on Edit Configuration
+![img.png](img.png)
+Select Tomcat Server `Local`
+![img_1.png](img_1.png)
+- Give a suitable name to the server according to the project
+- Click on configure and select the folder of Apache Tomcat which you've extracted/unzipped.
+![img_2.png](img_2.png)
+
+- Now go to Deploment Tab
+- Click on add Icon `+`
+- Select War:Exploded
+- `Apply` and `Ok`
+![img_3.png](img_3.png)
+
+You'll see the Run option, and your Apache Tomcat server is ready to run the application
+![img_4.png](img_4.png)
+
+For any help open `Issue`
