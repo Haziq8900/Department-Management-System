@@ -42,3 +42,37 @@ You'll see the Run option, and your Apache Tomcat server is ready to run the app
 ![img_4.png](img_4.png)
 
 For any help open `Issue`
+
+# Database Schema
+
+```sql
+CREATE TABLE IF NOT EXISTS teachers (
+                                        id INT AUTO_INCREMENT PRIMARY KEY,
+                                        name VARCHAR(200) NOT NULL,
+                                        email VARCHAR(200) NOT NULL UNIQUE,
+                                        department VARCHAR(200),
+                                        phone VARCHAR(50)
+);
+```
+
+```sql
+CREATE TABLE IF NOT EXISTS students (
+                                        id INT AUTO_INCREMENT PRIMARY KEY,
+                                        name VARCHAR(200) NOT NULL,
+                                        email VARCHAR(200) NOT NULL UNIQUE,
+                                        enrollment_number VARCHAR(100) NOT NULL UNIQUE,
+                                        department VARCHAR(200),
+                                        semester INT
+);
+
+```
+```sql
+CREATE TABLE IF NOT EXISTS courses (
+                                       id INT AUTO_INCREMENT PRIMARY KEY,
+                                       code VARCHAR(100) NOT NULL UNIQUE,
+                                       title VARCHAR(255) NOT NULL,
+                                       credits INT,
+                                       teacher_id INT,
+                                       CONSTRAINT fk_course_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
+);
+```
