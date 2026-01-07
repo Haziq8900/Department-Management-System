@@ -78,6 +78,17 @@ CREATE TABLE IF NOT EXISTS courses (
 ```
 
 ```sql
+CREATE TABLE IF NOT EXISTS users (
+                                     id INT AUTO_INCREMENT PRIMARY KEY,
+                                     username VARCHAR(50) UNIQUE NOT NULL,
+                                     password VARCHAR(255) NOT NULL,
+                                     email VARCHAR(100) UNIQUE NOT NULL,
+                                     role ENUM('Admin', 'Teacher', 'Student') DEFAULT 'Student',
+                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+```sql
 CREATE TABLE IF NOT EXISTS result (
                                       teacher_name VARCHAR (100) NOT NULL,
                                       course_title VARCHAR (255) NOT NULL UNIQUE,
