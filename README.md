@@ -76,3 +76,15 @@ CREATE TABLE IF NOT EXISTS courses (
                                        CONSTRAINT fk_course_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
 );
 ```
+
+```sql
+CREATE TABLE IF NOT EXISTS result (
+                                      teacher_name VARCHAR (100) NOT NULL,
+                                      course_title VARCHAR (255) NOT NULL UNIQUE,
+                                      course_code VARCHAR (100),
+                                      student_enrollment_no VARCHAR (100),
+                                      sessional_marks INT,
+                                      mid_marks INT,
+                                      final_marks INT
+)
+```
