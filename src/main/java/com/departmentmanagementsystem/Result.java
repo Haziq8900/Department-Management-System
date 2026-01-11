@@ -45,4 +45,21 @@ public class Result {
 
     public int getFinalMarks() { return finalMarks; }
     public void setFinalMarks(int finalMarks) { this.finalMarks = finalMarks; }
+
+    public String getGrade() {
+        int total = getTotalMarks(); // assuming total is out of 100
+
+        if (total >= 90) return "A+";
+        else if (total >= 81 && total <= 89) return "A";
+        else if (total >= 73 && total <= 80) return "B+";
+        else if (total >= 65 && total <= 72) return "B";
+        else if (total >= 60 && total <= 64) return "C+";
+        else if (total >= 55 && total <= 59) return "C";
+        else if (total >= 50 && total <= 54) return "C-";
+        else return "F";
+    }
+
+    public int getTotalMarks() {
+        return sessionalMarks + midMarks + finalMarks;
+    }
 }
