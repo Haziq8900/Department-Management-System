@@ -12,7 +12,7 @@
     </div>
 
     <nav class="p-4 space-y-2">
-        <!-- Dashboard -->
+        <!-- Dashboard (All users) -->
         <a href="<%= request.getContextPath() %>/dashboard.jsp"
            class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 <%= currentPath.contains("dashboard") ? "bg-blue-600 shadow-lg" : "hover:bg-slate-700" %>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,7 +21,7 @@
             <span class="font-medium">Dashboard</span>
         </a>
 
-        <!-- Students (Admin & Teacher) -->
+        <!-- Students (Admin & Teacher can view, Admin can CRUD) -->
         <% if ("Admin".equals(role) || "Teacher".equals(role)) { %>
         <a href="<%= request.getContextPath() %>/students"
            class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 <%= currentPath.contains("students") ? "bg-blue-600 shadow-lg" : "hover:bg-slate-700" %>">
@@ -54,14 +54,35 @@
         </a>
         <% } %>
 
-        <!-- Results (All roles) -->
-        <a href="<%= request.getContextPath() %>/result?action=<%= "Student".equals(role) ? "viewStudentResults" : "viewAll" %>"
+        <!-- Results -->
+        <% if ("Student".equals(role)) { %>
+        <!-- Students can only view their own results -->
+        <a href="<%= request.getContextPath() %>/result?action=viewStudentResults"
            class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 <%= currentPath.contains("result") ? "bg-blue-600 shadow-lg" : "hover:bg-slate-700" %>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
             </svg>
-            <span class="font-medium">Results</span>
+            <span class="font-medium">My Results</span>
         </a>
+        <% } else if ("Teacher".equals(role)) { %>
+        <!-- Teachers can manage results -->
+        <a href="<%= request.getContextPath() %>/result?action=viewAll"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 <%= currentPath.contains("result") ? "bg-blue-600 shadow-lg" : "hover:bg-slate-700" %>">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+            <span class="font-medium">Manage Results</span>
+        </a>
+        <% } else if ("Admin".equals(role)) { %>
+        <!-- Admin can only view results -->
+        <a href="<%= request.getContextPath() %>/result?action=viewAll"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 <%= currentPath.contains("result") ? "bg-blue-600 shadow-lg" : "hover:bg-slate-700" %>">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+            <span class="font-medium">View Results</span>
+        </a>
+        <% } %>
     </nav>
 
     <!-- Logout Button -->

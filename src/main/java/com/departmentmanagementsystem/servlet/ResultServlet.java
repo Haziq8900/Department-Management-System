@@ -28,45 +28,69 @@ public class ResultServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         String action = req.getParameter("action");
+        String role = user.getRole() != null ? user.getRole() : "Student";
 
         try {
             switch (action != null ? action : "") {
-                case "viewStudentResults": // student views their own results
-                    String enrollmentNo = user.getUsername(); // assuming username = enrollment number for students
-                    List<Result> results = resultDao.getResultsByStudent(enrollmentNo);
-                    req.setAttribute("results", results);
-                    req.getRequestDispatcher("/studentResults.jsp").forward(req, resp);
-                    break;
-
-                case "viewCourseResults": // teacher/admin views results by course
-                    String courseCode = req.getParameter("courseCode");
-                    if (courseCode != null && !courseCode.isEmpty()) {
-                        List<Result> courseResults = resultDao.getResultsByCourse(courseCode);
-                        req.setAttribute("results", courseResults);
-                        req.getRequestDispatcher("/courseResults.jsp").forward(req, resp);
-                    } else {
-                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=invalid_course");
-                    }
-                    break;
-
-                case "viewAll": // admin views all results
-                    if ("Admin".equalsIgnoreCase(user.getRole())) {
-                        List<Result> allResults = resultDao.getAllResults();
-                        req.setAttribute("results", allResults);
-                        req.getRequestDispatcher("/allResults.jsp").forward(req, resp);
+                case "viewStudentResults":
+                    // Students can only view their own results
+                    if ("Student".equals(role)) {
+                        String enrollmentNo = user.getUsername(); // Assuming username = enrollment number
+                        List<Result> results = resultDao.getResultsByStudent(enrollmentNo);
+                        req.setAttribute("results", results);
+                        req.getRequestDispatcher("/results/studentResults.jsp").forward(req, resp);
                     } else {
                         resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
                     }
                     break;
 
-                case "delete": // delete a result
-                    if ("Admin".equalsIgnoreCase(user.getRole()) || "Teacher".equalsIgnoreCase(user.getRole())) {
+                case "viewAll":
+                    // Admin and Teacher can view all results
+                    if ("Admin".equals(role) || "Teacher".equals(role)) {
+                        List<Result> allResults = resultDao.getAllResults();
+                        req.setAttribute("results", allResults);
+                        req.getRequestDispatcher("/results/allResults.jsp").forward(req, resp);
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                    }
+                    break;
+
+                case "new":
+                    // Only Teachers can add results
+                    if ("Teacher".equals(role)) {
+                        req.setAttribute("result", null);
+                        req.getRequestDispatcher("/results/form.jsp").forward(req, resp);
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                    }
+                    break;
+
+                case "delete":
+                    // Only Teachers can delete results
+                    if ("Teacher".equals(role)) {
                         String delEnrollmentNo = req.getParameter("studentEnrollmentNo");
                         String delCourseCode = req.getParameter("courseCode");
                         if (resultDao.deleteResult(delEnrollmentNo, delCourseCode)) {
-                            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?message=result_deleted");
+                            resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&message=result_deleted");
                         } else {
-                            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=delete_failed");
+                            resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&error=delete_failed");
+                        }
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                    }
+                    break;
+
+                case "searchByEnrollment":
+                    // Teachers can search by enrollment number
+                    if ("Teacher".equals(role)) {
+                        String searchEnrollment = req.getParameter("enrollmentNo");
+                        if (searchEnrollment != null && !searchEnrollment.isEmpty()) {
+                            List<Result> searchResults = resultDao.getResultsByStudent(searchEnrollment);
+                            req.setAttribute("results", searchResults);
+                            req.setAttribute("searchQuery", searchEnrollment);
+                            req.getRequestDispatcher("/results/allResults.jsp").forward(req, resp);
+                        } else {
+                            resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&error=invalid_search");
                         }
                     } else {
                         resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
@@ -74,7 +98,14 @@ public class ResultServlet extends HttpServlet {
                     break;
 
                 default:
-                    resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
+                    // Redirect based on role
+                    if ("Student".equals(role)) {
+                        resp.sendRedirect(req.getContextPath() + "/result?action=viewStudentResults");
+                    } else if ("Teacher".equals(role)) {
+                        resp.sendRedirect(req.getContextPath() + "/result?action=viewAll");
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/result?action=viewAll");
+                    }
                     break;
             }
         } catch (SQLException e) {
@@ -94,59 +125,63 @@ public class ResultServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         String action = req.getParameter("action");
+        String role = user.getRole() != null ? user.getRole() : "Student";
+
+        // Only Teachers can add or update results
+        if (!"Teacher".equals(role)) {
+            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+            return;
+        }
 
         try {
             switch (action != null ? action : "") {
                 case "addResult":
-                    if ("Admin".equalsIgnoreCase(user.getRole()) || "Teacher".equalsIgnoreCase(user.getRole())) {
-                        Result newResult = new Result(
-                                req.getParameter("teacherName"),
-                                req.getParameter("courseTitle"),
-                                req.getParameter("courseCode"),
-                                req.getParameter("studentEnrollmentNo"),
-                                Integer.parseInt(req.getParameter("sessionalMarks")),
-                                Integer.parseInt(req.getParameter("midMarks")),
-                                Integer.parseInt(req.getParameter("finalMarks"))
-                        );
+                    Result newResult = new Result(
+                            req.getParameter("teacherName"),
+                            req.getParameter("courseTitle"),
+                            req.getParameter("courseCode"),
+                            req.getParameter("studentEnrollmentNo"),
+                            Integer.parseInt(req.getParameter("sessionalMarks")),
+                            Integer.parseInt(req.getParameter("midMarks")),
+                            Integer.parseInt(req.getParameter("finalMarks"))
+                    );
 
-                        if (resultDao.addResult(newResult)) {
-                            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?message=result_added");
-                        } else {
-                            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=add_failed");
-                        }
+                    // Check if result already exists
+                    if (resultDao.resultExists(newResult.getStudentEnrollmentNo(), newResult.getCourseCode())) {
+                        resp.sendRedirect(req.getContextPath() + "/result?action=new&error=result_already_exists");
+                    } else if (resultDao.addResult(newResult)) {
+                        resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&message=result_added");
                     } else {
-                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                        resp.sendRedirect(req.getContextPath() + "/result?action=new&error=add_failed");
                     }
                     break;
 
                 case "updateResult":
-                    if ("Admin".equalsIgnoreCase(user.getRole()) || "Teacher".equalsIgnoreCase(user.getRole())) {
-                        Result updatedResult = new Result(
-                                req.getParameter("teacherName"),
-                                req.getParameter("courseTitle"),
-                                req.getParameter("courseCode"),
-                                req.getParameter("studentEnrollmentNo"),
-                                Integer.parseInt(req.getParameter("sessionalMarks")),
-                                Integer.parseInt(req.getParameter("midMarks")),
-                                Integer.parseInt(req.getParameter("finalMarks"))
-                        );
+                    Result updatedResult = new Result(
+                            req.getParameter("teacherName"),
+                            req.getParameter("courseTitle"),
+                            req.getParameter("courseCode"),
+                            req.getParameter("studentEnrollmentNo"),
+                            Integer.parseInt(req.getParameter("sessionalMarks")),
+                            Integer.parseInt(req.getParameter("midMarks")),
+                            Integer.parseInt(req.getParameter("finalMarks"))
+                    );
 
-                        if (resultDao.updateResult(updatedResult)) {
-                            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?message=result_updated");
-                        } else {
-                            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=update_failed");
-                        }
+                    if (resultDao.updateResult(updatedResult)) {
+                        resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&message=result_updated");
                     } else {
-                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                        resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&error=update_failed");
                     }
                     break;
 
                 default:
-                    resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
+                    resp.sendRedirect(req.getContextPath() + "/result?action=viewAll");
                     break;
             }
         } catch (SQLException e) {
             throw new ServletException(e);
+        } catch (NumberFormatException e) {
+            resp.sendRedirect(req.getContextPath() + "/result?action=new&error=invalid_marks");
         }
     }
 }

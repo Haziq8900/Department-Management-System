@@ -1,8 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.departmentmanagementsystem.Result" %>
+<%@ page import="com.departmentmanagementsystem.User" %>
 <%@ page import="java.util.List" %>
 <%
     List<Result> results = (List<Result>) request.getAttribute("results");
+    User currentUser = (User) session.getAttribute("user");
+    String role = currentUser != null && currentUser.getRole() != null ? currentUser.getRole() : "Student";
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,10 +26,31 @@
             <!-- Header -->
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-3xl font-bold text-slate-800">All Results</h2>
-                    <p class="text-slate-600 mt-1">Manage all student results</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        <% if ("Teacher".equals(role)) { %>
+                        Manage Results
+                        <% } else { %>
+                        All Results
+                        <% } %>
+                    </h2>
+                    <p class="text-slate-600 mt-1">
+                        <% if ("Teacher".equals(role)) { %>
+                        Add, update, or view student results
+                        <% } else { %>
+                        View all student results
+                        <% } %>
+                    </p>
                 </div>
                 <div class="flex gap-3">
+                    <% if ("Teacher".equals(role)) { %>
+                    <a href="<%= request.getContextPath() %>/result?action=new"
+                       class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add Result
+                    </a>
+                    <% } %>
                     <button
                             onclick="window.print()"
                             class="flex items-center gap-2 px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-all">
@@ -38,19 +62,57 @@
                 </div>
             </div>
 
+            <!-- Success/Error Messages -->
+            <%
+                String message = request.getParameter("message");
+                String error = request.getParameter("error");
+                if (message != null) {
+            %>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                <p class="text-green-700">
+                    <%= message.replace("_", " ").toUpperCase() %> successfully!
+                </p>
+            </div>
+            <% } %>
+            <% if (error != null) { %>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                <p class="text-red-700">
+                    Error: <%= error.replace("_", " ") %>
+                </p>
+            </div>
+            <% } %>
+
             <!-- Results Table -->
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div class="p-6 border-b border-slate-200">
-                    <input
-                            type="text"
-                            id="searchInput"
-                            placeholder="Search by student enrollment, course code, or teacher..."
-                            class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                            onkeyup="searchTable()"
-                    >
-                    <svg class="w-5 h-5 absolute left-9 top-9 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
+                    <div class="flex gap-4">
+                        <div class="flex-1 relative">
+                            <input
+                                    type="text"
+                                    id="searchInput"
+                                    placeholder="Search by student enrollment, course code, or teacher..."
+                                    class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                    onkeyup="searchTable()"
+                            >
+                            <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <% if ("Teacher".equals(role)) { %>
+                        <form action="<%= request.getContextPath() %>/result" method="get" class="flex gap-2">
+                            <input type="hidden" name="action" value="searchByEnrollment">
+                            <input
+                                    type="text"
+                                    name="enrollmentNo"
+                                    placeholder="Search by enrollment..."
+                                    class="px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            >
+                            <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+                                Search
+                            </button>
+                        </form>
+                        <% } %>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -66,7 +128,9 @@
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Final</th>
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Total</th>
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Grade</th>
+                            <% if ("Teacher".equals(role)) { %>
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Actions</th>
+                            <% } %>
                         </tr>
                         </thead>
                         <tbody>
@@ -105,6 +169,7 @@
                                             <%= grade %>
                                         </span>
                             </td>
+                            <% if ("Teacher".equals(role)) { %>
                             <td class="py-4 px-6">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="<%= request.getContextPath() %>/result?action=delete&studentEnrollmentNo=<%= result.getStudentEnrollmentNo() %>&courseCode=<%= result.getCourseCode() %>"
@@ -117,17 +182,20 @@
                                     </a>
                                 </div>
                             </td>
+                            <% } %>
                         </tr>
                         <% }
                         } else { %>
                         <tr>
-                            <td colspan="10" class="py-12 text-center">
+                            <td colspan="<%= "Teacher".equals(role) ? "10" : "9" %>" class="py-12 text-center">
                                 <div class="text-slate-400">
                                     <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                     <p class="text-lg font-medium">No results found</p>
+                                    <% if ("Teacher".equals(role)) { %>
                                     <p class="text-sm mt-1">Add results to see them here</p>
+                                    <% } %>
                                 </div>
                             </td>
                         </tr>

@@ -1,10 +1,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.departmentmanagementsystem.User" %>
+<%@ page import="com.departmentmanagementsystem.dao.StudentDao" %>
+<%@ page import="com.departmentmanagementsystem.dao.TeacherDao" %>
+<%@ page import="com.departmentmanagementsystem.dao.CourseDao" %>
+<%@ page import="com.departmentmanagementsystem.dao.ResultDao" %>
+<%@ page import="java.sql.SQLException" %>
 <%
     User user = (User) session.getAttribute("user");
     if (user == null) {
         response.sendRedirect(request.getContextPath() + "/login.jsp?error=login_required");
         return;
+    }
+
+    // Fetch counts from database
+    int totalStudents = 0;
+    int totalTeachers = 0;
+    int totalCourses = 0;
+    int totalResults = 0;
+
+    try {
+        StudentDao studentDao = new StudentDao();
+        TeacherDao teacherDao = new TeacherDao();
+        CourseDao courseDao = new CourseDao();
+        ResultDao resultDao = new ResultDao();
+
+        totalStudents = studentDao.findAll().size();
+        totalTeachers = teacherDao.findAll().size();
+        totalCourses = courseDao.findAll().size();
+        totalResults = resultDao.getAllResults().size();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 %>
 <!DOCTYPE html>
@@ -63,16 +88,13 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-slate-600 text-sm font-medium">Total Students</p>
-                            <h3 class="text-3xl font-bold text-slate-800 mt-2">245</h3>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2"><%= totalStudents %></h3>
                         </div>
                         <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                             </svg>
                         </div>
-                    </div>
-                    <div class="mt-4 flex items-center text-green-600 text-sm">
-                        <span>↑ 12% from last month</span>
                     </div>
                 </div>
 
@@ -81,16 +103,13 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-slate-600 text-sm font-medium">Total Teachers</p>
-                            <h3 class="text-3xl font-bold text-slate-800 mt-2">38</h3>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2"><%= totalTeachers %></h3>
                         </div>
                         <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </div>
-                    </div>
-                    <div class="mt-4 flex items-center text-green-600 text-sm">
-                        <span>↑ 5% from last month</span>
                     </div>
                 </div>
 
@@ -99,16 +118,13 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-slate-600 text-sm font-medium">Total Courses</p>
-                            <h3 class="text-3xl font-bold text-slate-800 mt-2">52</h3>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2"><%= totalCourses %></h3>
                         </div>
                         <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
                         </div>
-                    </div>
-                    <div class="mt-4 flex items-center text-green-600 text-sm">
-                        <span>↑ 8% from last month</span>
                     </div>
                 </div>
 
@@ -117,16 +133,13 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-slate-600 text-sm font-medium">Results Published</p>
-                            <h3 class="text-3xl font-bold text-slate-800 mt-2">189</h3>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2"><%= totalResults %></h3>
                         </div>
                         <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                             </svg>
                         </div>
-                    </div>
-                    <div class="mt-4 flex items-center text-green-600 text-sm">
-                        <span>↑ 15% from last month</span>
                     </div>
                 </div>
             </div>
@@ -140,22 +153,22 @@
                         <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
                             <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-slate-700">New student enrolled</p>
-                                <p class="text-xs text-slate-500">2 hours ago</p>
+                                <p class="text-sm font-medium text-slate-700">System active</p>
+                                <p class="text-xs text-slate-500">Connected to database</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
                             <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-slate-700">Result published for CS-101</p>
-                                <p class="text-xs text-slate-500">5 hours ago</p>
+                                <p class="text-sm font-medium text-slate-700">Dashboard loaded</p>
+                                <p class="text-xs text-slate-500">All modules operational</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
                             <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-slate-700">Course updated</p>
-                                <p class="text-xs text-slate-500">1 day ago</p>
+                                <p class="text-sm font-medium text-slate-700">User session active</p>
+                                <p class="text-xs text-slate-500">Logged in as <%= user.getRole() %></p>
                             </div>
                         </div>
                     </div>
@@ -165,30 +178,39 @@
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Quick Actions</h3>
                     <div class="grid grid-cols-2 gap-3">
+                        <% if ("Admin".equals(user.getRole()) || "Teacher".equals(user.getRole())) { %>
                         <a href="<%= request.getContextPath() %>/students?action=new" class="p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
                             <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span class="text-sm font-medium">Add Student</span>
                         </a>
-                        <a href="<%= request.getContextPath() %>/courses?action=new" class="p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
+                        <% } %>
+
+                        <% if ("Admin".equals(user.getRole())) { %>
+                        <a href="<%= request.getContextPath() %>/teachers?action=new" class="p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
+                            <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span class="text-sm font-medium">Add Teacher</span>
+                        </a>
+                        <% } %>
+
+                        <% if ("Admin".equals(user.getRole()) || "Teacher".equals(user.getRole())) { %>
+                        <a href="<%= request.getContextPath() %>/courses?action=new" class="p-4 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
                             <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span class="text-sm font-medium">Add Course</span>
                         </a>
-                        <a href="<%= request.getContextPath() %>/students" class="p-4 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
+                        <% } %>
+
+                        <a href="<%= request.getContextPath() %>/students" class="p-4 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
                             <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            <span class="text-sm font-medium">View Reports</span>
-                        </a>
-                        <a href="<%= request.getContextPath() %>/result?action=viewAll" class="p-4 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 text-center">
-                            <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span class="text-sm font-medium">Add Result</span>
+                            <span class="text-sm font-medium">View All</span>
                         </a>
                     </div>
                 </div>
