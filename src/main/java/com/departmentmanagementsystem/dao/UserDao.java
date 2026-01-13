@@ -2,23 +2,29 @@ package com.departmentmanagementsystem.dao;
 
 import Database.DatabaseConnection;
 import java.sql.*;
+import com.departmentmanagementsystem.User;
 
 public class UserDao {
 
     // Returns true if credentials match
-    public boolean login(String username, String password) {
-        String sql = "SELECT 1 FROM users WHERE username = ? AND password = ?";
+    public User login(String username, String password) throws SQLException {
+        String sql = "SELECT id, username, email, role FROM users WHERE username = ? AND password = ?";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRole(rs.getString("role")); // IMPORTANT!
+                    return user;
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
         }
+        return null;
     }
 
     // Returns true if password was changed
