@@ -131,7 +131,7 @@
                         <!-- Mid Marks -->
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">
-                                Mid Term Marks (Max: 30) <span class="text-red-500">*</span>
+                                Mid Term Marks (Max: 20) <span class="text-red-500">*</span>
                             </label>
                             <input
                                     type="number"
@@ -139,9 +139,9 @@
                                     id="midMarks"
                                     value="<%= result != null ? result.getMidMarks() : "" %>"
                                     class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="0-30"
+                                    placeholder="0-20"
                                     min="0"
-                                    max="30"
+                                    max="20"
                                     onchange="calculateTotal()"
                                     required
                             >
@@ -150,7 +150,7 @@
                         <!-- Final Marks -->
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">
-                                Final Exam Marks (Max: 50) <span class="text-red-500">*</span>
+                                Final Exam Marks (Max: 60) <span class="text-red-500">*</span>
                             </label>
                             <input
                                     type="number"
@@ -158,9 +158,9 @@
                                     id="finalMarks"
                                     value="<%= result != null ? result.getFinalMarks() : "" %>"
                                     class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="0-50"
+                                    placeholder="0-60"
                                     min="0"
-                                    max="50"
+                                    max="60"
                                     onchange="calculateTotal()"
                                     required
                             >
@@ -258,12 +258,12 @@
             alert('Sessional marks must be between 0 and 20');
             return false;
         }
-        if (mid < 0 || mid > 30) {
-            alert('Mid term marks must be between 0 and 30');
+        if (mid < 0 || mid > 20) {
+            alert('Mid term marks must be between 0 and 20');
             return false;
         }
-        if (final < 0 || final > 50) {
-            alert('Final exam marks must be between 0 and 50');
+        if (final < 0 || final > 60) {
+            alert('Final exam marks must be between 0 and 60');
             return false;
         }
 
