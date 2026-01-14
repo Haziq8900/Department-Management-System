@@ -9,8 +9,8 @@ import java.util.List;
 
 public class CourseDao {
     public List<Course> findAll() throws SQLException {
-        String sql = "SELECT id, code, title, credits, teacher_id FROM courses ORDER BY id DESC";
-        // Returns all courses from database, ordered by ID
+        String sql = "SELECT id, code, title, credits, teacher_id, sem FROM courses ORDER BY sem, id DESC";
+        // Returns all courses from database, ordered by semester then ID
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -21,7 +21,7 @@ public class CourseDao {
     }
 
     public Course findById(int id) throws SQLException {
-        String sql = "SELECT id, code, title, credits, teacher_id FROM courses WHERE id=?";
+        String sql = "SELECT id, code, title, credits, teacher_id, sem FROM courses WHERE id=?";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -33,7 +33,7 @@ public class CourseDao {
     }
 
     public int create(Course c) throws SQLException {
-        String sql = "INSERT INTO courses (code, title, credits, teacher_id) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO courses (code, title, credits, teacher_id, sem) VALUES (?,?,?,?,?)";
         // Persists course; returns generated key or negative one
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -41,6 +41,7 @@ public class CourseDao {
             ps.setString(2, c.getTitle());
             if (c.getCredits() == null) ps.setNull(3, Types.INTEGER); else ps.setInt(3, c.getCredits());
             if (c.getTeacherId() == null) ps.setNull(4, Types.INTEGER); else ps.setInt(4, c.getTeacherId());
+            if (c.getSem() == null) ps.setNull(5, Types.INTEGER); else ps.setInt(5, c.getSem());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) { if (keys.next()) return keys.getInt(1); }
             return -1;
@@ -48,7 +49,7 @@ public class CourseDao {
     }
 
     public boolean update(Course c) throws SQLException {
-        String sql = "UPDATE courses SET code=?, title=?, credits=?, teacher_id=? WHERE id=?";
+        String sql = "UPDATE courses SET code=?, title=?, credits=?, teacher_id=?, sem=? WHERE id=?";
         // Updates course; returns success status
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -56,7 +57,8 @@ public class CourseDao {
             ps.setString(2, c.getTitle());
             if (c.getCredits() == null) ps.setNull(3, Types.INTEGER); else ps.setInt(3, c.getCredits());
             if (c.getTeacherId() == null) ps.setNull(4, Types.INTEGER); else ps.setInt(4, c.getTeacherId());
-            ps.setInt(5, c.getId());
+            if (c.getSem() == null) ps.setNull(5, Types.INTEGER); else ps.setInt(5, c.getSem());
+            ps.setInt(6, c.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -76,7 +78,8 @@ public class CourseDao {
                 rs.getString("code"),
                 rs.getString("title"),
                 (Integer) rs.getObject("credits"),
-                (Integer) rs.getObject("teacher_id")
+                (Integer) rs.getObject("teacher_id"),
+                (Integer) rs.getObject("sem")
         );
     }
 }
