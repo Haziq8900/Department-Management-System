@@ -120,12 +120,12 @@
                             </td>
                             <td class="py-4 px-6 font-medium text-slate-800"><%= result.getCourseTitle() %></td>
                             <td class="py-4 px-6 text-slate-600"><%= result.getTeacherName() %></td>
-                            <td class="py-4 px-6 text-center font-semibold"><%= result.getSessionalMarks() %></td>
-                            <td class="py-4 px-6 text-center font-semibold"><%= result.getMidMarks() %></td>
-                            <td class="py-4 px-6 text-center font-semibold"><%= result.getFinalMarks() %></td>
+                            <td class="py-4 px-6 text-center font-semibold"><%= result.getSessionalMarks() != null ? result.getSessionalMarks() : "-" %></td>
+                            <td class="py-4 px-6 text-center font-semibold"><%= result.getMidMarks() != null ? result.getMidMarks() : "-" %></td>
+                            <td class="py-4 px-6 text-center font-semibold"><%= result.getFinalMarks() != null ? result.getFinalMarks() : "-" %></td>
                             <td class="py-4 px-6 text-center">
                                         <span class="px-3 py-1 bg-slate-100 text-slate-800 rounded-full text-sm font-bold">
-                                            <%= result.getTotalMarks() %>
+                                            <%= result.getTotalMarks() %> / <%= result.getMaxMarks() %>
                                         </span>
                             </td>
                             <td class="py-4 px-6 text-center">

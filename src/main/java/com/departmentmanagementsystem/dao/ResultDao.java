@@ -9,10 +9,10 @@ import java.util.List;
 
 public class ResultDao {
 
-    // Add a new result record
+    // Add a new result record (mid and final marks can be NULL)
     public boolean addResult(Result result) throws SQLException {
-        String sql = "INSERT INTO result (teacher_name, course_title, course_code, student_enrollment_no, sessional_marks, mid_marks, final_marks) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO result (teacher_name, course_title, course_code, student_enrollment_no, sessional_marks, mid_marks, final_marks, credits) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -20,28 +20,67 @@ public class ResultDao {
             ps.setString(2, result.getCourseTitle());
             ps.setString(3, result.getCourseCode());
             ps.setString(4, result.getStudentEnrollmentNo());
-            ps.setInt(5, result.getSessionalMarks());
-            ps.setInt(6, result.getMidMarks());
-            ps.setInt(7, result.getFinalMarks());
+            ps.setInt(5, result.getSessionalMarks()); // Mandatory
+
+            // Mid marks - can be NULL
+            if (result.getMidMarks() != null) {
+                ps.setInt(6, result.getMidMarks());
+            } else {
+                ps.setNull(6, Types.INTEGER);
+            }
+
+            // Final marks - can be NULL
+            if (result.getFinalMarks() != null) {
+                ps.setInt(7, result.getFinalMarks());
+            } else {
+                ps.setNull(7, Types.INTEGER);
+            }
+
+            // Credits
+            if (result.getCredits() != null) {
+                ps.setInt(8, result.getCredits());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+            }
 
             return ps.executeUpdate() > 0;
         }
     }
 
-    // Update an existing result record
+    // Update an existing result record (mid and final marks can be NULL)
     public boolean updateResult(Result result) throws SQLException {
-        String sql = "UPDATE result SET teacher_name = ?, course_title = ?, sessional_marks = ?, mid_marks = ?, final_marks = ? " +
+        String sql = "UPDATE result SET teacher_name = ?, course_title = ?, sessional_marks = ?, mid_marks = ?, final_marks = ?, credits = ? " +
                 "WHERE student_enrollment_no = ? AND course_code = ?";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, result.getTeacherName());
             ps.setString(2, result.getCourseTitle());
-            ps.setInt(3, result.getSessionalMarks());
-            ps.setInt(4, result.getMidMarks());
-            ps.setInt(5, result.getFinalMarks());
-            ps.setString(6, result.getStudentEnrollmentNo());
-            ps.setString(7, result.getCourseCode());
+            ps.setInt(3, result.getSessionalMarks()); // Mandatory
+
+            // Mid marks - can be NULL
+            if (result.getMidMarks() != null) {
+                ps.setInt(4, result.getMidMarks());
+            } else {
+                ps.setNull(4, Types.INTEGER);
+            }
+
+            // Final marks - can be NULL
+            if (result.getFinalMarks() != null) {
+                ps.setInt(5, result.getFinalMarks());
+            } else {
+                ps.setNull(5, Types.INTEGER);
+            }
+
+            // Credits
+            if (result.getCredits() != null) {
+                ps.setInt(6, result.getCredits());
+            } else {
+                ps.setNull(6, Types.INTEGER);
+            }
+
+            ps.setString(7, result.getStudentEnrollmentNo());
+            ps.setString(8, result.getCourseCode());
 
             return ps.executeUpdate() > 0;
         }
@@ -89,8 +128,8 @@ public class ResultDao {
                             rs.getString("course_code"),
                             rs.getString("student_enrollment_no"),
                             rs.getInt("sessional_marks"),
-                            rs.getInt("mid_marks"),
-                            rs.getInt("final_marks")
+                            (Integer) rs.getObject("mid_marks"), // Can be NULL
+                            (Integer) rs.getObject("final_marks") // Can be NULL
                     );
                     results.add(r);
                 }
@@ -117,8 +156,8 @@ public class ResultDao {
                             rs.getString("course_code"),
                             rs.getString("student_enrollment_no"),
                             rs.getInt("sessional_marks"),
-                            rs.getInt("mid_marks"),
-                            rs.getInt("final_marks")
+                            (Integer) rs.getObject("mid_marks"), // Can be NULL
+                            (Integer) rs.getObject("final_marks") // Can be NULL
                     );
                     results.add(r);
                 }
@@ -130,7 +169,7 @@ public class ResultDao {
 
     // Get all results (optional, for admin dashboard)
     public List<Result> getAllResults() throws SQLException {
-        String sql = "SELECT * FROM result";
+        String sql = "SELECT * FROM result ORDER BY student_enrollment_no";
         List<Result> results = new ArrayList<>();
 
         try (Connection con = DatabaseConnection.getConnection();
@@ -144,8 +183,8 @@ public class ResultDao {
                         rs.getString("course_code"),
                         rs.getString("student_enrollment_no"),
                         rs.getInt("sessional_marks"),
-                        rs.getInt("mid_marks"),
-                        rs.getInt("final_marks")
+                        (Integer) rs.getObject("mid_marks"), // Can be NULL
+                        (Integer) rs.getObject("final_marks") // Can be NULL
                 );
                 results.add(r);
             }

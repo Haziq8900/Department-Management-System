@@ -141,9 +141,9 @@ public class ResultServlet extends HttpServlet {
                             req.getParameter("courseTitle"),
                             req.getParameter("courseCode"),
                             req.getParameter("studentEnrollmentNo"),
-                            Integer.parseInt(req.getParameter("sessionalMarks")),
-                            Integer.parseInt(req.getParameter("midMarks")),
-                            Integer.parseInt(req.getParameter("finalMarks"))
+                            parseIntegerRequired(req.getParameter("sessionalMarks")), // Mandatory
+                            parseIntegerOptional(req.getParameter("midMarks")), // Optional
+                            parseIntegerOptional(req.getParameter("finalMarks")) // Optional
                     );
 
                     // Check if result already exists
@@ -162,9 +162,9 @@ public class ResultServlet extends HttpServlet {
                             req.getParameter("courseTitle"),
                             req.getParameter("courseCode"),
                             req.getParameter("studentEnrollmentNo"),
-                            Integer.parseInt(req.getParameter("sessionalMarks")),
-                            Integer.parseInt(req.getParameter("midMarks")),
-                            Integer.parseInt(req.getParameter("finalMarks"))
+                            parseIntegerRequired(req.getParameter("sessionalMarks")), // Mandatory
+                            parseIntegerOptional(req.getParameter("midMarks")), // Optional
+                            parseIntegerOptional(req.getParameter("finalMarks")) // Optional
                     );
 
                     if (resultDao.updateResult(updatedResult)) {
@@ -182,6 +182,30 @@ public class ResultServlet extends HttpServlet {
             throw new ServletException(e);
         } catch (NumberFormatException e) {
             resp.sendRedirect(req.getContextPath() + "/result?action=new&error=invalid_marks");
+        }
+    }
+
+    /**
+     * Parse integer that is required (throws exception if null/empty)
+     */
+    private Integer parseIntegerRequired(String value) throws NumberFormatException {
+        if (value == null || value.trim().isEmpty()) {
+            throw new NumberFormatException("Required field is empty");
+        }
+        return Integer.parseInt(value.trim());
+    }
+
+    /**
+     * Parse integer that is optional (returns null if empty)
+     */
+    private Integer parseIntegerOptional(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 }
