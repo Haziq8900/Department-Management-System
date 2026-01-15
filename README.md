@@ -89,15 +89,15 @@ CREATE TABLE IF NOT EXISTS users (
 ```
 
 ```sql
-CREATE TABLE result (
-                        teacher_name VARCHAR(255),
-                        course_title VARCHAR(255),
-                        course_code VARCHAR(50),
-                        student_enrollment_no VARCHAR(50),
-                        sessional_marks INT,
-                        mid_marks INT,
-                        final_marks INT,
-                        credits INT,
-                        PRIMARY KEY (student_enrollment_no, course_code)
+CREATE TABLE IF NOT EXISTS result (
+                                      teacher_name VARCHAR(255),
+                                      course_title VARCHAR(255),
+                                      course_code VARCHAR(50),
+                                      student_enrollment_no VARCHAR(50),
+                                      sessional_marks INT,
+                                      mid_marks INT,
+                                      final_marks INT,
+                                      credits INT,
+                                      PRIMARY KEY (student_enrollment_no, course_code)
 );
 ```
