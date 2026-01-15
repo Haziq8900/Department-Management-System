@@ -85,17 +85,19 @@ CREATE TABLE IF NOT EXISTS users (
                                      email VARCHAR(100) UNIQUE NOT NULL,
                                      role ENUM('Admin', 'Teacher', 'Student') DEFAULT 'Student',
                                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 ```
 
 ```sql
-CREATE TABLE IF NOT EXISTS result (
-                                      teacher_name VARCHAR (100) NOT NULL,
-                                      course_title VARCHAR (255) NOT NULL UNIQUE,
-                                      course_code VARCHAR (100),
-                                      student_enrollment_no VARCHAR (100),
-                                      sessional_marks INT,
-                                      mid_marks INT,
-                                      final_marks INT
-)
+CREATE TABLE result (
+                        teacher_name VARCHAR(255),
+                        course_title VARCHAR(255),
+                        course_code VARCHAR(50),
+                        student_enrollment_no VARCHAR(50),
+                        sessional_marks INT,
+                        mid_marks INT,
+                        final_marks INT,
+                        credits INT,
+                        PRIMARY KEY (student_enrollment_no, course_code)
+);
 ```
