@@ -25,6 +25,7 @@
                     <h2 class="text-3xl font-bold text-slate-800">Courses</h2>
                     <p class="text-slate-600 mt-1">Manage course catalog</p>
                 </div>
+                <% if (!"Student".equals(userRole)) { %>
                 <a href="<%= request.getContextPath() %>/courses?action=new"
                    class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,6 +33,7 @@
                     </svg>
                     Add Course
                 </a>
+                <% } %>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">

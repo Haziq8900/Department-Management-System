@@ -122,6 +122,7 @@ public class ResultDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    Integer credits = (Integer) rs.getObject("credits");  // Added: Read credits
                     Result r = new Result(
                             rs.getString("teacher_name"),
                             rs.getString("course_title"),
@@ -129,7 +130,8 @@ public class ResultDao {
                             rs.getString("student_enrollment_no"),
                             rs.getInt("sessional_marks"),
                             (Integer) rs.getObject("mid_marks"), // Can be NULL
-                            (Integer) rs.getObject("final_marks") // Can be NULL
+                            (Integer) rs.getObject("final_marks"), // Can be NULL
+                            credits  // Added: Pass credits to constructor
                     );
                     results.add(r);
                 }
@@ -150,6 +152,7 @@ public class ResultDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    Integer credits = (Integer) rs.getObject("credits");  // Added: Read credits
                     Result r = new Result(
                             rs.getString("teacher_name"),
                             rs.getString("course_title"),
@@ -157,7 +160,8 @@ public class ResultDao {
                             rs.getString("student_enrollment_no"),
                             rs.getInt("sessional_marks"),
                             (Integer) rs.getObject("mid_marks"), // Can be NULL
-                            (Integer) rs.getObject("final_marks") // Can be NULL
+                            (Integer) rs.getObject("final_marks"), // Can be NULL
+                            credits  // Added: Pass credits to constructor
                     );
                     results.add(r);
                 }
@@ -177,6 +181,7 @@ public class ResultDao {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
+                Integer credits = (Integer) rs.getObject("credits");  // Added: Read credits
                 Result r = new Result(
                         rs.getString("teacher_name"),
                         rs.getString("course_title"),
@@ -184,7 +189,8 @@ public class ResultDao {
                         rs.getString("student_enrollment_no"),
                         rs.getInt("sessional_marks"),
                         (Integer) rs.getObject("mid_marks"), // Can be NULL
-                        (Integer) rs.getObject("final_marks") // Can be NULL
+                        (Integer) rs.getObject("final_marks"), // Can be NULL
+                        credits  // Added: Pass credits to constructor
                 );
                 results.add(r);
             }

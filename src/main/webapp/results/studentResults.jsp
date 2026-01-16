@@ -28,12 +28,14 @@
 
             <% if (results != null && !results.isEmpty()) {
                 // Calculate overall statistics
-                int totalMarks = 0;
                 int totalCourses = results.size();
+                double totalPercentage = 0;
                 for (Result r : results) {
-                    totalMarks += r.getTotalMarks();
+                    if (r.getFinalMarks() != null) { // Only count complete results
+                        totalPercentage += (r.getTotalMarks() * 100.0) / r.getMaxMarks();
+                    }
                 }
-                double averageMarks = totalCourses > 0 ? (double) totalMarks / totalCourses : 0;
+                double averagePercentage = totalCourses > 0 ? totalPercentage / totalCourses : 0;
             %>
 
             <!-- Statistics Cards -->
@@ -56,7 +58,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-slate-600 text-sm font-medium">Average Score</p>
-                            <h3 class="text-3xl font-bold text-slate-800 mt-2"><%= String.format("%.1f", averageMarks) %>%</h3>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2"><%= String.format("%.1f", averagePercentage) %>%</h3>
                         </div>
                         <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +73,7 @@
                         <div>
                             <p class="text-slate-600 text-sm font-medium">Overall GPA</p>
                             <h3 class="text-3xl font-bold text-slate-800 mt-2">
-                                <%= averageMarks >= 90 ? "4.0" : averageMarks >= 80 ? "3.5" : averageMarks >= 70 ? "3.0" : averageMarks >= 60 ? "2.5" : "2.0" %>
+                                <%= averagePercentage >= 90 ? "4.0" : averagePercentage >= 81 ? "3.5" : averagePercentage >= 73 ? "3.0" : averagePercentage >= 65 ? "2.5" : averagePercentage >= 60 ? "2.0" : averagePercentage >= 55 ? "1.5" : averagePercentage >= 50 ? "1.0" : "0.0" %>
                             </h3>
                         </div>
                         <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">

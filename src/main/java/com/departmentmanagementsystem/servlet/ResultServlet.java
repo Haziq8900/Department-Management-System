@@ -13,7 +13,6 @@ import java.util.List;
 
 @WebServlet("/result")
 public class ResultServlet extends HttpServlet {
-
     private final ResultDao resultDao = new ResultDao();
 
     @Override
@@ -165,6 +164,7 @@ public class ResultServlet extends HttpServlet {
         try {
             switch (action != null ? action : "") {
                 case "addResult":
+                    Integer credits = parseIntegerOptional(req.getParameter("credits"));  // Added: Read credits
                     Result newResult = new Result(
                             req.getParameter("teacherName"),
                             req.getParameter("courseTitle"),
@@ -172,7 +172,8 @@ public class ResultServlet extends HttpServlet {
                             req.getParameter("studentEnrollmentNo"),
                             parseIntegerRequired(req.getParameter("sessionalMarks")), // Mandatory
                             parseIntegerOptional(req.getParameter("midMarks")), // Optional
-                            parseIntegerOptional(req.getParameter("finalMarks")) // Optional
+                            parseIntegerOptional(req.getParameter("finalMarks")), // Optional
+                            credits  // Added: Pass credits to constructor
                     );
 
                     // Check if result already exists
@@ -186,6 +187,7 @@ public class ResultServlet extends HttpServlet {
                     break;
 
                 case "updateResult":
+                    Integer creditsUpdate = parseIntegerOptional(req.getParameter("credits"));  // Added: Read credits
                     Result updatedResult = new Result(
                             req.getParameter("teacherName"),
                             req.getParameter("courseTitle"),
@@ -193,7 +195,8 @@ public class ResultServlet extends HttpServlet {
                             req.getParameter("studentEnrollmentNo"),
                             parseIntegerRequired(req.getParameter("sessionalMarks")), // Mandatory
                             parseIntegerOptional(req.getParameter("midMarks")), // Optional
-                            parseIntegerOptional(req.getParameter("finalMarks")) // Optional
+                            parseIntegerOptional(req.getParameter("finalMarks")), // Optional
+                            creditsUpdate  // Added: Pass credits to constructor
                     );
 
                     if (resultDao.updateResult(updatedResult)) {

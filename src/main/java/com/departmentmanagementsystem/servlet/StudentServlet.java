@@ -1,6 +1,7 @@
 package com.departmentmanagementsystem.servlet;
 
 import com.departmentmanagementsystem.Student;
+import com.departmentmanagementsystem.User;
 import com.departmentmanagementsystem.dao.StudentDao;
 
 import javax.servlet.ServletException;
@@ -8,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -18,6 +20,18 @@ public class StudentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
+        // For doGet - allow only list action
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null && "Student".equals(user.getRole())) {
+                String action2 = req.getParameter("action");
+                if (action != null && !"list".equals(action) && !action.isEmpty()) {
+                    resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                    return;
+                }
+            }
+        }
         // Handles student actions: list, new, edit, delete
         if (action == null || action.equals("list")) {
             list(req, resp);
@@ -47,6 +61,15 @@ public class StudentServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // For doPost - block all POST requests
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null && "Student".equals(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                return;
+            }
+        }
         req.setCharacterEncoding("UTF-8");
         String idStr = req.getParameter("id");
         Student s = new Student();
