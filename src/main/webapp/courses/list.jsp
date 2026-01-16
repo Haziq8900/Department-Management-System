@@ -58,7 +58,9 @@
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Semester</th>
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Credits</th>
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Teacher</th>
+                            <% if (!"Student".equals(userRole)) { %>
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Actions</th>
+                            <% } %>
                         </tr>
                         </thead>
                         <tbody>
@@ -90,6 +92,7 @@
                             <td class="py-4 px-6 text-slate-600">
                                 <%= course.getTeacherId() != null ? "Teacher ID: " + course.getTeacherId() : "Not Assigned" %>
                             </td>
+                            <% if (!"Student".equals(userRole)) { %>
                             <td class="py-4 px-6">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="<%= request.getContextPath() %>/courses?action=edit&id=<%= course.getId() %>"
@@ -107,11 +110,12 @@
                                     </a>
                                 </div>
                             </td>
+                            <% } %>
                         </tr>
                         <% }
                         } else { %>
                         <tr>
-                            <td colspan="7" class="py-12 text-center">
+                            <td colspan="<%= "Student".equals(userRole) ? "6" : "7" %>" class="py-12 text-center">
                                 <div class="text-slate-400">
                                     <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>

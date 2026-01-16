@@ -97,6 +97,35 @@ public class ResultServlet extends HttpServlet {
                     }
                     break;
 
+                case "edit":
+                    // Only Teachers can edit results
+                    if ("Teacher".equals(role)) {
+                        String editEnrollmentNo = req.getParameter("studentEnrollmentNo");
+                        String editCourseCode = req.getParameter("courseCode");
+                        try {
+                            // Get the result to edit
+                            List<Result> results = resultDao.getResultsByStudent(editEnrollmentNo);
+                            Result editResult = null;
+                            for (Result r : results) {
+                                if (r.getCourseCode().equals(editCourseCode)) {
+                                    editResult = r;
+                                    break;
+                                }
+                            }
+                            if (editResult != null) {
+                                req.setAttribute("result", editResult);
+                                req.getRequestDispatcher("/results/form.jsp").forward(req, resp);
+                            } else {
+                                resp.sendRedirect(req.getContextPath() + "/result?action=viewAll&error=result_not_found");
+                            }
+                        } catch (SQLException e) {
+                            throw new ServletException(e);
+                        }
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/dashboard.jsp?error=unauthorized");
+                    }
+                    break;
+
                 default:
                     // Redirect based on role
                     if ("Student".equals(role)) {
