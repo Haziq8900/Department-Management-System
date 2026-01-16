@@ -73,8 +73,8 @@ CREATE TABLE IF NOT EXISTS courses (
                                        title VARCHAR(255) NOT NULL,
                                        credits INT,
                                        teacher_id INT,
-                                       sem INT,
-                                       CONSTRAINT fk_course_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
+                                       CONSTRAINT fk_course_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL,
+                                       sem INT
 );
 ```
 
