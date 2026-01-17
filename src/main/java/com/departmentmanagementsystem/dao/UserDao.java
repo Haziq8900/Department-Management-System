@@ -40,16 +40,17 @@ public class UserDao {
     }
 
     // Register a new user (simple plain-text password)
-    public boolean registerUser(String username, String password, String email) throws SQLException {
-        if (userExists(username)) {
+    public boolean registerUser(User user) throws SQLException {
+        if (userExists(user.getUsername())) {
             return false;
         }
-        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, username);
-            ps.setString(2, password);
-            ps.setString(3, email);
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getRole());
             return ps.executeUpdate() > 0;
         }
     }
