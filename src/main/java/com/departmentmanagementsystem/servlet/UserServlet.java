@@ -71,8 +71,11 @@ public class UserServlet extends HttpServlet {
             } else if ("register".equals(action)) {
                 String username = req.getParameter("username");
                 String password = req.getParameter("password");
+                String email = req.getParameter("email");
+                String role = req.getParameter("role");
 
-                if (dao.registerUser(username, password)) {
+                User user = new User(username, password, email, role);
+                if (dao.registerUser(user)) {
                     resp.sendRedirect(req.getContextPath() + "/login.jsp?message=registration_successful");
                 } else {
                     resp.sendRedirect(req.getContextPath() + "/register.jsp?error=username_taken");
