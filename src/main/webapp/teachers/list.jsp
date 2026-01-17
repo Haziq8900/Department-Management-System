@@ -1,8 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.departmentmanagementsystem.Teacher" %>
+<%@ page import="com.departmentmanagementsystem.User" %>
 <%@ page import="java.util.List" %>
 <%
     List<Teacher> items = (List<Teacher>) request.getAttribute("items");
+    User user = (User) session.getAttribute("user");  // Added: Declare user from session
+%>
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +28,7 @@
                     <h2 class="text-3xl font-bold text-slate-800">Teachers</h2>
                     <p class="text-slate-600 mt-1">Manage teacher records</p>
                 </div>
+                <% if ("Admin".equals(user.getRole())) { %>
                 <a href="<%= request.getContextPath() %>/teachers?action=new"
                    class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,6 +36,7 @@
                     </svg>
                     Add Teacher
                 </a>
+                <% } %>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -57,7 +62,9 @@
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Email</th>
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Department</th>
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Phone</th>
+                            <% if ("Admin".equals(user.getRole())) { %>
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Actions</th>
+                            <% } %>
                         </tr>
                         </thead>
                         <tbody>
@@ -80,6 +87,7 @@
                                         </span>
                             </td>
                             <td class="py-4 px-6 text-slate-700"><%= teacher.getPhone() != null ? teacher.getPhone() : "N/A" %></td>
+                            <% if ("Admin".equals(user.getRole())) { %>
                             <td class="py-4 px-6">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="<%= request.getContextPath() %>/teachers?action=edit&id=<%= teacher.getId() %>"
@@ -97,11 +105,12 @@
                                     </a>
                                 </div>
                             </td>
+                            <% } %>
                         </tr>
                         <% }
                         } else { %>
                         <tr>
-                            <td colspan="6" class="py-12 text-center">
+                            <td colspan="<%= "Admin".equals(user.getRole()) ? "6" : "5" %>" class="py-12 text-center">
                                 <div class="text-slate-400">
                                     <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>

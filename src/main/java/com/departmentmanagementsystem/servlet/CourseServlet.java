@@ -53,6 +53,7 @@ public class CourseServlet extends HttpServlet {
         c.setTitle(req.getParameter("title"));
         c.setCredits(parseNullableInt(req.getParameter("credits")));
         c.setTeacherId(parseNullableInt(req.getParameter("teacherId")));
+        c.setSem(parseNullableInt(req.getParameter("sem"))); // Add semester
         try {
             // Creates or updates course based on ID existence
             if (idStr == null || idStr.isEmpty()) { dao.create(c); }

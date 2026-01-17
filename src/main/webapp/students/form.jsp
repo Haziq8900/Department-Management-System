@@ -102,13 +102,13 @@
                                     required
                             >
                                 <option value="">Select Department</option>
-                                <option value="Computer Science" <%= student != null && "Computer Science".equals(student.getDepartment()) ? "selected" : "" %>>Computer Science</option>
-                                <option value="Mathematics" <%= student != null && "Mathematics".equals(student.getDepartment()) ? "selected" : "" %>>Mathematics</option>
-                                <option value="Physics" <%= student != null && "Physics".equals(student.getDepartment()) ? "selected" : "" %>>Physics</option>
-                                <option value="Chemistry" <%= student != null && "Chemistry".equals(student.getDepartment()) ? "selected" : "" %>>Chemistry</option>
-                                <option value="Biology" <%= student != null && "Biology".equals(student.getDepartment()) ? "selected" : "" %>>Biology</option>
-                                <option value="English" <%= student != null && "English".equals(student.getDepartment()) ? "selected" : "" %>>English</option>
-                                <option value="History" <%= student != null && "History".equals(student.getDepartment()) ? "selected" : "" %>>History</option>
+                                <option value="Software Engineering" <%= student != null && "Software Engineering".equals(student.getDepartment()) ? "selected" : "" %>>Software Engineering</option>
+                                <option value="Mechanical Engineering" <%= student != null && "Mechanical Engineering".equals(student.getDepartment()) ? "selected" : "" %>>Mechanical Engineering</option>
+                                <option value="Artificial Intelligence" <%= student != null && "Artificial Intelligence".equals(student.getDepartment()) ? "selected" : "" %>>Artificial Intelligence</option>
+                                <option value="Chemical Engineering" <%= student != null && "Chemical Engineering".equals(student.getDepartment()) ? "selected" : "" %>>Chemical Engineering</option>
+                                <option value="Computer System Engineering" <%= student != null && "Computer System Engineering".equals(student.getDepartment()) ? "selected" : "" %>>Computer System Engineering</option>
+                                <option value="Cyber Security" <%= student != null && "Cyber Security".equals(student.getDepartment()) ? "selected" : "" %>>Cyber Security</option>
+                                <option value="Telecommunication Engineering" <%= student != null && "Telecommunication Engineering".equals(student.getDepartment()) ? "selected" : "" %>>Telecommunication Engineering</option>
                             </select>
                         </div>
 

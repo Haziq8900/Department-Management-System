@@ -78,6 +78,29 @@
                             <p class="text-xs text-slate-500 mt-1">Number of credit hours (1-6)</p>
                         </div>
 
+                        <!-- Semester -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Semester <span class="text-red-500">*</span>
+                            </label>
+                            <select
+                                    name="sem"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                    required
+                            >
+                                <option value="">Select Semester</option>
+                                <option value="1" <%= course != null && course.getSem() != null && course.getSem() == 1 ? "selected" : "" %>>Semester 1</option>
+                                <option value="2" <%= course != null && course.getSem() != null && course.getSem() == 2 ? "selected" : "" %>>Semester 2</option>
+                                <option value="3" <%= course != null && course.getSem() != null && course.getSem() == 3 ? "selected" : "" %>>Semester 3</option>
+                                <option value="4" <%= course != null && course.getSem() != null && course.getSem() == 4 ? "selected" : "" %>>Semester 4</option>
+                                <option value="5" <%= course != null && course.getSem() != null && course.getSem() == 5 ? "selected" : "" %>>Semester 5</option>
+                                <option value="6" <%= course != null && course.getSem() != null && course.getSem() == 6 ? "selected" : "" %>>Semester 6</option>
+                                <option value="7" <%= course != null && course.getSem() != null && course.getSem() == 7 ? "selected" : "" %>>Semester 7</option>
+                                <option value="8" <%= course != null && course.getSem() != null && course.getSem() == 8 ? "selected" : "" %>>Semester 8</option>
+                            </select>
+                            <p class="text-xs text-slate-500 mt-1">Which semester this course is taught</p>
+                        </div>
+
                         <!-- Course Title -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-slate-700 mb-2">
@@ -142,6 +165,7 @@
                         <ul class="text-sm text-green-700 mt-1 list-disc list-inside">
                             <li>Course code should be unique and follow department standards</li>
                             <li>Credit hours typically range from 1 to 6</li>
+                            <li>Semester indicates which term the course is offered (1-8)</li>
                             <li>Teacher assignment can be updated later if not available now</li>
                             <li>Course title should be descriptive and professional</li>
                         </ul>

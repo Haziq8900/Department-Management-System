@@ -1,26 +1,30 @@
 package com.departmentmanagementsystem.dao;
 
 import Database.DatabaseConnection;
-import com.departmentmanagementsystem.User;
-
 import java.sql.*;
+import com.departmentmanagementsystem.User;
 
 public class UserDao {
 
     // Returns true if credentials match
-    public boolean login(String username, String password) {
-        String sql = "SELECT 1 FROM users WHERE username = ? AND password = ?";
+    public User login(String username, String password) throws SQLException {
+        String sql = "SELECT id, username, email, role FROM users WHERE username = ? AND password = ?";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRole(rs.getString("role")); // IMPORTANT!
+                    return user;
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
         }
+        return null;
     }
 
     // Returns true if password was changed
@@ -36,17 +40,16 @@ public class UserDao {
     }
 
     // Register a new user (simple plain-text password)
-    public boolean registerUser(User user) throws SQLException {
-        if (userExists(user.getUsername())) {
+    public boolean registerUser(String username, String password, String email) throws SQLException {
+        if (userExists(username)) {
             return false;
         }
-        String sql = "INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getEmail());
-            ps.setString(4, user.getRole());
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, email);
             return ps.executeUpdate() > 0;
         }
     }

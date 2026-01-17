@@ -14,26 +14,22 @@ public class UserServlet extends HttpServlet {
 
     private final UserDao dao = new UserDao();
 
-    // Handles GET requests
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
 
         if ("logout".equals(action)) {
-            // Invalidate the session to log out
             HttpSession session = req.getSession(false);
             if (session != null) {
                 session.invalidate();
             }
             resp.sendRedirect(req.getContextPath() + "/login.jsp?message=logged_out");
         } else {
-            // Default GET behavior: redirect to login page
             resp.sendRedirect(req.getContextPath() + "/login.jsp");
         }
     }
 
-    // Handles POST requests
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -44,12 +40,13 @@ public class UserServlet extends HttpServlet {
                 String username = req.getParameter("username");
                 String password = req.getParameter("password");
 
-                if (dao.login(username, password)) {
-                    // Do NOT store password in session
-                    User user = new User();
-                    user.setUsername(username);
+                // CORRECTED: Capture the User object returned by the DAO
+                User user = dao.login(username, password);
 
+                // CORRECTED: Check if the user object is not null
+                if (user != null) {
                     HttpSession session = req.getSession();
+                    // SUCCESS: Store the user object (which now includes ID, Email, and ROLE)
                     session.setAttribute("user", user);
 
                     resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
@@ -72,10 +69,8 @@ public class UserServlet extends HttpServlet {
                 String username = req.getParameter("username");
                 String password = req.getParameter("password");
                 String email = req.getParameter("email");
-                String role = req.getParameter("role");
 
-                User user = new User(username, password, email, role);
-                if (dao.registerUser(user)) {
+                if (dao.registerUser(username, password, email)) {
                     resp.sendRedirect(req.getContextPath() + "/login.jsp?message=registration_successful");
                 } else {
                     resp.sendRedirect(req.getContextPath() + "/register.jsp?error=username_taken");

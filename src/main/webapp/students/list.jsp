@@ -26,6 +26,11 @@
                     <h2 class="text-3xl font-bold text-slate-800">Students</h2>
                     <p class="text-slate-600 mt-1">Manage student records</p>
                 </div>
+                <%
+                    User currentUser = (User) session.getAttribute("user");
+                    String currentRole = currentUser != null && currentUser.getRole() != null ? currentUser.getRole() : "Student";
+                    if (!"Student".equals(userRole)) {
+                %>
                 <a href="<%= request.getContextPath() %>/students?action=new"
                    class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,6 +38,7 @@
                     </svg>
                     Add Student
                 </a>
+                <% } %>
             </div>
 
             <!-- Students Table -->
@@ -62,7 +68,9 @@
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Enrollment No</th>
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Department</th>
                             <th class="text-left py-4 px-6 font-semibold text-slate-700">Semester</th>
+                            <% if (!"Student".equals(userRole)) { %>
                             <th class="text-center py-4 px-6 font-semibold text-slate-700">Actions</th>
+                            <% } %>
                         </tr>
                         </thead>
                         <tbody>
@@ -86,6 +94,7 @@
                             </td>
                             <td class="py-4 px-6 text-slate-700"><%= student.getDepartment() %></td>
                             <td class="py-4 px-6 text-slate-700"><%= student.getSemester() != null ? student.getSemester() : "N/A" %></td>
+                            <% if (!"Student".equals(userRole)) { %>
                             <td class="py-4 px-6">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="<%= request.getContextPath() %>/students?action=edit&id=<%= student.getId() %>"
@@ -103,11 +112,12 @@
                                     </a>
                                 </div>
                             </td>
+                            <% } %>
                         </tr>
                         <% }
                         } else { %>
                         <tr>
-                            <td colspan="7" class="py-12 text-center">
+                            <td colspan="<%= "Student".equals(userRole) ? "6" : "7" %>" class="py-12 text-center">
                                 <div class="text-slate-400">
                                     <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
